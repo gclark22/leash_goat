@@ -81,6 +81,11 @@
 
 * { box-sizing: border-box; }
 
+/* Elements toggled via the `hidden` attribute also carry classes that set
+   their own `display` (flex, etc.); without this, that class wins over the
+   browser's default [hidden]{display:none} and the element stays visible. */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -259,6 +264,14 @@ h1 {
 
 .barrel-frame.visible {
   opacity: 1;
+}
+
+.goat-insult {
+  text-align: center;
+  font-style: italic;
+  color: var(--wrong);
+  min-height: 1.4em;
+  margin: 10px 0 0;
 }
 
 .game {

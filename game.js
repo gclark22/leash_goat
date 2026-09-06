@@ -41,6 +41,20 @@ const copyLinkBtn = document.getElementById("copy-link");
 const winCounterEl = document.getElementById("win-counter");
 const skinButtons = document.querySelectorAll(".skin-option");
 const secretButton = document.getElementById("secret-button");
+const goatInsultEl = document.getElementById("goat-insult");
+
+const GOAT_INSULTS = [
+  "Really? That's your guess?",
+  "Baaaad guess. Truly baaaad.",
+  "My hay bale could've guessed better.",
+  "Is that your final answer? Please say no.",
+  "Even the barrel saw that one coming.",
+  "I've met sheep with better vocabulary.",
+  "Wow. Just... wow.",
+  "That guess offends me personally.",
+  "Try using the alphabet, not the void.",
+  "I'm leashed, not blind. That was rough.",
+];
 const modeButtons = document.querySelectorAll(".mode-option");
 const modeDescriptionEl = document.getElementById("mode-description");
 const timerDisplayEl = document.getElementById("timer-display");
@@ -436,6 +450,67 @@ function playCheer() {
   }
 }
 
+let musicPlaying = false;
+let musicStepTimer = null;
+
+function scheduleMusicStep(stepIndex) {
+  if (!musicPlaying) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+
+    const now = audioCtx.currentTime;
+    const isAccent = stepIndex % 4 === 0;
+
+    const bass = audioCtx.createOscillator();
+    bass.type = "square";
+    bass.frequency.setValueAtTime(isAccent ? 110 : 82, now);
+    bass.frequency.exponentialRampToValueAtTime(40, now + 0.18);
+    const bassGain = audioCtx.createGain();
+    bassGain.gain.setValueAtTime(isAccent ? 0.32 : 0.2, now);
+    bassGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+    bass.connect(bassGain);
+    bassGain.connect(audioCtx.destination);
+    bass.start(now);
+    bass.stop(now + 0.2);
+
+    if (stepIndex % 2 === 0) {
+      const stab = audioCtx.createOscillator();
+      stab.type = "sawtooth";
+      stab.frequency.value = 220 + (stepIndex % 8) * 15;
+      const stabFilter = audioCtx.createBiquadFilter();
+      stabFilter.type = "highpass";
+      stabFilter.frequency.value = 800;
+      const stabGain = audioCtx.createGain();
+      stabGain.gain.setValueAtTime(0.0001, now);
+      stabGain.gain.exponentialRampToValueAtTime(0.07, now + 0.02);
+      stabGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+      stab.connect(stabFilter);
+      stabFilter.connect(stabGain);
+      stabGain.connect(audioCtx.destination);
+      stab.start(now);
+      stab.stop(now + 0.15);
+    }
+  } catch (err) {
+    // Web Audio unsupported or blocked; skip this step silently.
+  }
+  musicStepTimer = setTimeout(() => scheduleMusicStep(stepIndex + 1), 200);
+}
+
+function startIntenseMusic() {
+  if (musicPlaying) return;
+  musicPlaying = true;
+  scheduleMusicStep(0);
+}
+
+function stopIntenseMusic() {
+  musicPlaying = false;
+  if (musicStepTimer) {
+    clearTimeout(musicStepTimer);
+    musicStepTimer = null;
+  }
+}
+
 function renderStatus() {
   const remaining = maxWrong - wrongCount;
   guessesLeftEl.textContent = gameOver
@@ -465,6 +540,7 @@ function findNewlyUnlocked(counterName, previousValue, currentValue) {
 function endGame(won, reason) {
   gameOver = true;
   stopTimer();
+  stopIntenseMusic();
 
   if (won) {
     const previousWins = wins;
@@ -521,6 +597,7 @@ function guess(letter) {
     wrongCount++;
     correctStreak = 0;
     playBaa();
+    goatInsultEl.textContent = GOAT_INSULTS[Math.floor(Math.random() * GOAT_INSULTS.length)];
   } else {
     correctStreak++;
     if (correctStreak >= 3 && !danyUnlocked) {
@@ -552,6 +629,7 @@ function newGame() {
   maxWrong = mode === "goat" ? GOAT_MODE_MAX_WRONG : CLASSIC_MAX_WRONG;
   statusEl.textContent = "";
   statusEl.className = "status";
+  goatInsultEl.textContent = "";
   categoryEl.textContent = customChallenge
     ? customChallenge.hint
       ? `🎯 Friend's hint: ${customChallenge.hint}`
@@ -564,8 +642,10 @@ function newGame() {
   renderStatus();
   if (mode === "goat") {
     startTimer();
+    startIntenseMusic();
   } else {
     stopTimer();
+    stopIntenseMusic();
   }
 }
 
