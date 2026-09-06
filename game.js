@@ -35,13 +35,6 @@ const copyLinkBtn = document.getElementById("copy-link");
 const winCounterEl = document.getElementById("win-counter");
 const skinButtons = document.querySelectorAll(".skin-option");
 
-const SKINS = {
-  goat: { unlockWins: 0, label: "🐐 Goat" },
-  bunny: { unlockWins: 3, label: "🐰 Bunny" },
-  llama: { unlockWins: 5, label: "🦙 Llama" },
-  goob: { unlockWins: 10, label: "🐩 Goob" },
-};
-
 function loadWins() {
   try {
     return parseInt(localStorage.getItem("leashGoatWins"), 10) || 0;
@@ -55,6 +48,22 @@ function saveWins(count) {
     localStorage.setItem("leashGoatWins", String(count));
   } catch (err) {
     // localStorage unavailable; win count just won't persist.
+  }
+}
+
+function loadDannyUnlocked() {
+  try {
+    return localStorage.getItem("leashGoatDannyUnlocked") === "true";
+  } catch (err) {
+    return false;
+  }
+}
+
+function saveDannyUnlocked(value) {
+  try {
+    localStorage.setItem("leashGoatDannyUnlocked", String(value));
+  } catch (err) {
+    // localStorage unavailable; unlock just won't persist.
   }
 }
 
@@ -75,18 +84,29 @@ function saveSkin(skinName) {
 }
 
 let wins = loadWins();
+let dannyUnlocked = loadDannyUnlocked();
+let correctStreak = 0;
+
+const SKINS = {
+  goat: { label: "🐐 Goat", isUnlocked: () => true },
+  bunny: { label: "🐰 Bunny", unlockWins: 3, isUnlocked: () => wins >= 3 },
+  llama: { label: "🦙 Llama", unlockWins: 5, isUnlocked: () => wins >= 5 },
+  goob: { label: "🐩 Goob", unlockWins: 10, isUnlocked: () => wins >= 10 },
+  danny: { label: "😄 Danny", isUnlocked: () => dannyUnlocked },
+};
+
 let selectedSkin = loadSkin();
-if (!SKINS[selectedSkin] || wins < SKINS[selectedSkin].unlockWins) {
+if (!SKINS[selectedSkin] || !SKINS[selectedSkin].isUnlocked()) {
   selectedSkin = "goat";
 }
 
 function updateSkinUI() {
   winCounterEl.textContent = `🏆 Wins: ${wins}`;
   skinButtons.forEach((btn) => {
-    const skinName = btn.dataset.skin;
-    const unlocked = wins >= SKINS[skinName].unlockWins;
+    const skin = SKINS[btn.dataset.skin];
+    const unlocked = skin.isUnlocked();
     btn.disabled = !unlocked;
-    btn.classList.toggle("selected", skinName === selectedSkin);
+    btn.classList.toggle("selected", btn.dataset.skin === selectedSkin);
     const lock = btn.querySelector(".lock");
     if (lock) lock.hidden = unlocked;
   });
@@ -96,7 +116,8 @@ function updateSkinUI() {
 }
 
 function selectSkin(skinName) {
-  if (!SKINS[skinName] || wins < SKINS[skinName].unlockWins) return;
+  const skin = SKINS[skinName];
+  if (!skin || !skin.isUnlocked()) return;
   selectedSkin = skinName;
   saveSkin(selectedSkin);
   updateSkinUI();
@@ -366,7 +387,17 @@ function guess(letter) {
   guessed.add(letter);
   if (!word.includes(letter)) {
     wrongCount++;
+    correctStreak = 0;
     playBaa();
+  } else {
+    correctStreak++;
+    if (correctStreak >= 3 && !dannyUnlocked) {
+      dannyUnlocked = true;
+      saveDannyUnlocked(true);
+      updateSkinUI();
+      statusEl.textContent = "😄 New skin unlocked: Danny! (3 correct guesses in a row)";
+      statusEl.className = "status win";
+    }
   }
   renderWord();
   renderGoat();
@@ -384,6 +415,7 @@ function newGame() {
   }
   guessed = new Set();
   wrongCount = 0;
+  correctStreak = 0;
   gameOver = false;
   statusEl.textContent = "";
   statusEl.className = "status";
