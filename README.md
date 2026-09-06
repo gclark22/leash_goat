@@ -14,7 +14,9 @@ Play it here: **https://gclark22.github.io/leash_goat/**
   cheer on a win (synthesized in the browser, no audio files)
 - A win counter (saved in your browser) that unlocks alternate character
   skins: 🐰 Bunny at 3 wins, 🦙 Llama at 5 wins, 🐩 Goob (a golden doodle) at
-  10 wins
+  10 wins, and 😄 Dany (a real photo, revealed in slices) after 3 correct
+  guesses in a row. There's also a secret way to unlock a bonus ✨ Golden
+  Dany skin — good luck finding it.
 - **Challenge a Friend**: type your own word or phrase and hint, generate a
   shareable link, and send it to a friend to solve. The word is encoded in
   the link itself (no server/database), so it works on GitHub Pages as-is.

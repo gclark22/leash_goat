@@ -45,6 +45,10 @@
   --goob-tongue: #f28ba0;
   --goob-paw: #c98f4e;
   --goob-collar: #3f6fa8;
+
+  --gold-frame: #d4af37;
+  --gold-frame-bg: #fdf3d0;
+  --gold-photo-filter: sepia(0.85) saturate(4.5) hue-rotate(-12deg) brightness(1.1) contrast(1.05);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -117,6 +121,10 @@ h1 {
 
 .part.visible {
   opacity: 1;
+}
+
+.gold-photo {
+  filter: var(--gold-photo-filter);
 }
 
 .skins {
@@ -330,4 +338,18 @@ footer {
   color: var(--muted);
   font-size: 0.85rem;
   margin-top: 16px;
+}
+
+.secret-button {
+  border: none;
+  background: none;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  color: var(--muted);
+  opacity: 0.25;
+  cursor: pointer;
+}
+
+.secret-button:hover {
+  opacity: 0.6;
 }

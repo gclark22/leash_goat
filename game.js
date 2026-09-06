@@ -34,6 +34,7 @@ const challengeLinkInput = document.getElementById("challenge-link");
 const copyLinkBtn = document.getElementById("copy-link");
 const winCounterEl = document.getElementById("win-counter");
 const skinButtons = document.querySelectorAll(".skin-option");
+const secretButton = document.getElementById("secret-button");
 
 function loadWins() {
   try {
@@ -51,17 +52,33 @@ function saveWins(count) {
   }
 }
 
-function loadDannyUnlocked() {
+function loadDanyUnlocked() {
   try {
-    return localStorage.getItem("leashGoatDannyUnlocked") === "true";
+    return localStorage.getItem("leashGoatDanyUnlocked") === "true";
   } catch (err) {
     return false;
   }
 }
 
-function saveDannyUnlocked(value) {
+function saveDanyUnlocked(value) {
   try {
-    localStorage.setItem("leashGoatDannyUnlocked", String(value));
+    localStorage.setItem("leashGoatDanyUnlocked", String(value));
+  } catch (err) {
+    // localStorage unavailable; unlock just won't persist.
+  }
+}
+
+function loadGoldenDanyUnlocked() {
+  try {
+    return localStorage.getItem("leashGoatGoldenDanyUnlocked") === "true";
+  } catch (err) {
+    return false;
+  }
+}
+
+function saveGoldenDanyUnlocked(value) {
+  try {
+    localStorage.setItem("leashGoatGoldenDanyUnlocked", String(value));
   } catch (err) {
     // localStorage unavailable; unlock just won't persist.
   }
@@ -84,7 +101,8 @@ function saveSkin(skinName) {
 }
 
 let wins = loadWins();
-let dannyUnlocked = loadDannyUnlocked();
+let danyUnlocked = loadDanyUnlocked();
+let goldenDanyUnlocked = loadGoldenDanyUnlocked();
 let correctStreak = 0;
 
 const SKINS = {
@@ -92,7 +110,8 @@ const SKINS = {
   bunny: { label: "🐰 Bunny", unlockWins: 3, isUnlocked: () => wins >= 3 },
   llama: { label: "🦙 Llama", unlockWins: 5, isUnlocked: () => wins >= 5 },
   goob: { label: "🐩 Goob", unlockWins: 10, isUnlocked: () => wins >= 10 },
-  danny: { label: "😄 Danny", isUnlocked: () => dannyUnlocked },
+  dany: { label: "😄 Dany", isUnlocked: () => danyUnlocked },
+  "dany-gold": { label: "✨ Golden Dany", isUnlocked: () => goldenDanyUnlocked },
 };
 
 let selectedSkin = loadSkin();
@@ -126,6 +145,15 @@ function selectSkin(skinName) {
 
 skinButtons.forEach((btn) => {
   btn.addEventListener("click", () => selectSkin(btn.dataset.skin));
+});
+
+secretButton.addEventListener("click", () => {
+  if (goldenDanyUnlocked) return;
+  goldenDanyUnlocked = true;
+  saveGoldenDanyUnlocked(true);
+  updateSkinUI();
+  statusEl.textContent = "✨ Secret unlocked: Golden Dany!";
+  statusEl.className = "status win";
 });
 
 function sanitizeWord(raw) {
@@ -391,11 +419,11 @@ function guess(letter) {
     playBaa();
   } else {
     correctStreak++;
-    if (correctStreak >= 3 && !dannyUnlocked) {
-      dannyUnlocked = true;
-      saveDannyUnlocked(true);
+    if (correctStreak >= 3 && !danyUnlocked) {
+      danyUnlocked = true;
+      saveDanyUnlocked(true);
       updateSkinUI();
-      statusEl.textContent = "😄 New skin unlocked: Danny! (3 correct guesses in a row)";
+      statusEl.textContent = "😄 New skin unlocked: Dany! (3 correct guesses in a row)";
       statusEl.className = "status win";
     }
   }
