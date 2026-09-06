@@ -1,14 +1,14 @@
 const WORD_BANK = {
   "Animals": ["ELEPHANT", "GIRAFFE", "PENGUIN", "OCTOPUS", "KANGAROO", "GOAT", "FLAMINGO", "DANYDAHAN", "GOOB"],
   "Food": ["PIZZA", "AVOCADO", "PRETZEL", "SPAGHETTI", "PANCAKE", "BURRITO", "BEANS"],
-  "Places": ["MOUNTAIN", "LIBRARY", "VOLCANO", "DESERT", "HARBOR", "MEADOW"],
-  "Tech": ["KEYBOARD", "JAVASCRIPT", "BROWSER", "ALGORITHM", "NETWORK", "PIXEL"],
-  "Things": ["UMBRELLA", "TELESCOPE", "COMPASS", "LANTERN", "BACKPACK", "HAMMOCK", "QUIRE", "SYZYGY", "CHARGOGGAGOGGMANCHAUGGAGOGGCHAUBUNAGUNGAMAUGG", "CATAWAMPUS", "PETRICHOR", "GUBERNATORIAL", "CACTUS", "WHATDOYOUCALLABEARWITHNOTEETHAGUMMYBEAR", "TUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGSAHUR"],
+  "Places": ["MOUNTAIN", "LIBRARY", "VOLCANO", "DESERT", "HARBOR", "MEADOW", "DEMOCRATICREPUBLICOFTHECONGO", "DANTOPIA"],
+  "Tech": ["KEYBOARD", "JAVASCRIPT", "BROWSER", "ALGORITHM", "NETWORK", "PIXEL", "COMPUTER"],
+  "Things": ["UMBRELLA", "TELESCOPE", "COMPASS", "LANTERN", "BACKPACK", "HAMMOCK", "QUIRE", "SYZYGY", "CHARGOGGAGOGGMANCHAUGGAGOGGCHAUBUNAGUNGAMAUGG", "CATAWAMPUS", "PETRICHOR", "GUBERNATORIAL", "CACTUS", "WHATDOYOUCALLABEARWITHNOTEETHAGUMMYBEAR", "TUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGSAHUR", "GARAGEKEYS"],
 };
 
 const CLASSIC_MAX_WRONG = 6;
 const GOAT_MODE_MAX_WRONG = 3;
-const GOAT_MODE_SECONDS = 45;
+const GOAT_MODE_SECONDS = 30;
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 let category = "";
@@ -156,8 +156,8 @@ const SKINS = {
   goob: { label: "🐩 Goob", counterName: "wins", unlockThreshold: 10, isUnlocked: () => wins >= 10 },
   dany: { label: "😄 Dany", isUnlocked: () => danyUnlocked },
   "dany-gold": { label: "✨ Golden Dany", isUnlocked: () => goldenDanyUnlocked },
-  fish: { label: "🐟 Fish", counterName: "goatModeWins", unlockThreshold: 1, isUnlocked: () => goatModeWins >= 1 },
-  "super-goat": { label: "🦸 Super Goat", counterName: "goatModeWins", unlockThreshold: 3, isUnlocked: () => goatModeWins >= 3 },
+  cat: { label: "🐱 Cat", counterName: "goatModeWins", unlockThreshold: 3, isUnlocked: () => goatModeWins >= 3 },
+  "super-goat": { label: "🦸 Super Goat", counterName: "goatModeWins", unlockThreshold: 5, isUnlocked: () => goatModeWins >= 5 },
 };
 
 let selectedSkin = loadSkin();
@@ -661,7 +661,7 @@ function setMode(newMode) {
   timerDisplayEl.hidden = !isGoatMode;
   goatModeProgressEl.hidden = !isGoatMode;
   modeDescriptionEl.textContent = isGoatMode
-    ? "45 seconds on the clock, only 3 mistakes allowed. Miss the clock or strike out and the goat tumbles into the hay barrel."
+    ? "30 seconds on the clock, only 3 mistakes allowed. Miss the clock or strike out and the goat tumbles into the hay barrel."
     : "6 wrong guesses allowed, no timer.";
 
   if (isGoatMode) updateGoatModeProgress();
