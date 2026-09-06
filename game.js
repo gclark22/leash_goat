@@ -6,7 +6,9 @@ const WORD_BANK = {
   "Things": ["UMBRELLA", "TELESCOPE", "COMPASS", "LANTERN", "BACKPACK", "HAMMOCK", "QUIRE", "SYZYGY", "CHARGOGGAGOGGMANCHAUGGAGOGGCHAUBUNAGUNGAMAUGG", "CATAWAMPUS", "PETRICHOR", "GUBERNATORIAL", "CACTUS", "WHATDOYOUCALLABEARWITHNOTEETHAGUMMYBEAR", "TUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGTUNGSAHUR"],
 };
 
-const MAX_WRONG = 6;
+const CLASSIC_MAX_WRONG = 6;
+const GOAT_MODE_MAX_WRONG = 3;
+const GOAT_MODE_SECONDS = 45;
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 let category = "";
@@ -15,6 +17,10 @@ let guessed = new Set();
 let wrongCount = 0;
 let gameOver = false;
 let customChallenge = null;
+let mode = "classic";
+let maxWrong = CLASSIC_MAX_WRONG;
+let timeLeft = 0;
+let timerInterval = null;
 
 const wordEl = document.getElementById("word");
 const categoryEl = document.getElementById("category");
@@ -35,6 +41,13 @@ const copyLinkBtn = document.getElementById("copy-link");
 const winCounterEl = document.getElementById("win-counter");
 const skinButtons = document.querySelectorAll(".skin-option");
 const secretButton = document.getElementById("secret-button");
+const modeButtons = document.querySelectorAll(".mode-option");
+const modeDescriptionEl = document.getElementById("mode-description");
+const timerDisplayEl = document.getElementById("timer-display");
+const goatModeProgressEl = document.getElementById("goat-mode-progress");
+const classicSceneEl = document.getElementById("classic-scene");
+const barrelSceneEl = document.getElementById("barrel-scene");
+const skinsSectionEl = document.getElementById("skins-section");
 
 function loadWins() {
   try {
@@ -84,6 +97,22 @@ function saveGoldenDanyUnlocked(value) {
   }
 }
 
+function loadGoatModeWins() {
+  try {
+    return parseInt(localStorage.getItem("leashGoatGoatModeWins"), 10) || 0;
+  } catch (err) {
+    return 0;
+  }
+}
+
+function saveGoatModeWins(count) {
+  try {
+    localStorage.setItem("leashGoatGoatModeWins", String(count));
+  } catch (err) {
+    // localStorage unavailable; GOAT Mode win count just won't persist.
+  }
+}
+
 function loadSkin() {
   try {
     return localStorage.getItem("leashGoatSkin") || "goat";
@@ -101,17 +130,20 @@ function saveSkin(skinName) {
 }
 
 let wins = loadWins();
+let goatModeWins = loadGoatModeWins();
 let danyUnlocked = loadDanyUnlocked();
 let goldenDanyUnlocked = loadGoldenDanyUnlocked();
 let correctStreak = 0;
 
 const SKINS = {
   goat: { label: "🐐 Goat", isUnlocked: () => true },
-  bunny: { label: "🐰 Bunny", unlockWins: 3, isUnlocked: () => wins >= 3 },
-  llama: { label: "🦙 Llama", unlockWins: 5, isUnlocked: () => wins >= 5 },
-  goob: { label: "🐩 Goob", unlockWins: 10, isUnlocked: () => wins >= 10 },
+  bunny: { label: "🐰 Bunny", counterName: "wins", unlockThreshold: 3, isUnlocked: () => wins >= 3 },
+  llama: { label: "🦙 Llama", counterName: "wins", unlockThreshold: 5, isUnlocked: () => wins >= 5 },
+  goob: { label: "🐩 Goob", counterName: "wins", unlockThreshold: 10, isUnlocked: () => wins >= 10 },
   dany: { label: "😄 Dany", isUnlocked: () => danyUnlocked },
   "dany-gold": { label: "✨ Golden Dany", isUnlocked: () => goldenDanyUnlocked },
+  fish: { label: "🐟 Fish", counterName: "goatModeWins", unlockThreshold: 1, isUnlocked: () => goatModeWins >= 1 },
+  "super-goat": { label: "🦸 Super Goat", counterName: "goatModeWins", unlockThreshold: 3, isUnlocked: () => goatModeWins >= 3 },
 };
 
 let selectedSkin = loadSkin();
@@ -140,7 +172,7 @@ function selectSkin(skinName) {
   selectedSkin = skinName;
   saveSkin(selectedSkin);
   updateSkinUI();
-  renderGoat();
+  renderScene();
 }
 
 skinButtons.forEach((btn) => {
@@ -216,11 +248,49 @@ function renderWord() {
     .join(" ");
 }
 
-function renderGoat() {
-  document.querySelectorAll(".skin.active [data-stage]").forEach((part) => {
-    const stage = Number(part.dataset.stage);
-    part.classList.toggle("visible", stage <= wrongCount);
-  });
+function renderScene() {
+  if (mode === "goat") {
+    const capped = Math.min(wrongCount, GOAT_MODE_MAX_WRONG);
+    document.querySelectorAll(".barrel-frame").forEach((frame) => {
+      frame.classList.toggle("visible", Number(frame.dataset.mistakes) === capped);
+    });
+  } else {
+    document.querySelectorAll(".skin.active [data-stage]").forEach((part) => {
+      const stage = Number(part.dataset.stage);
+      part.classList.toggle("visible", stage <= wrongCount);
+    });
+  }
+}
+
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+}
+
+function updateTimerDisplay() {
+  timerDisplayEl.textContent = `⏱️ ${timeLeft}s`;
+  timerDisplayEl.classList.toggle("low-time", timeLeft <= 10);
+}
+
+function startTimer() {
+  stopTimer();
+  timeLeft = GOAT_MODE_SECONDS;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      wrongCount = maxWrong;
+      renderScene();
+      endGame(false, "timeout");
+    }
+  }, 1000);
+}
+
+function updateGoatModeProgress() {
+  goatModeProgressEl.textContent = `🔥 GOAT Mode Wins: ${goatModeWins}`;
 }
 
 let audioCtx = null;
@@ -367,7 +437,7 @@ function playCheer() {
 }
 
 function renderStatus() {
-  const remaining = MAX_WRONG - wrongCount;
+  const remaining = maxWrong - wrongCount;
   guessesLeftEl.textContent = gameOver
     ? ""
     : `Wrong guesses left: ${remaining}`;
@@ -383,30 +453,64 @@ function updateKeyStates() {
   });
 }
 
-function checkGameEnd() {
-  const solved = word.split("").every((ch) => ch === " " || guessed.has(ch));
-  if (solved) {
-    gameOver = true;
+function findNewlyUnlocked(counterName, previousValue, currentValue) {
+  return Object.entries(SKINS).find(
+    ([, skin]) =>
+      skin.counterName === counterName &&
+      skin.unlockThreshold === currentValue &&
+      previousValue < skin.unlockThreshold
+  );
+}
+
+function endGame(won, reason) {
+  gameOver = true;
+  stopTimer();
+
+  if (won) {
     const previousWins = wins;
     wins++;
     saveWins(wins);
-    const justUnlocked = Object.entries(SKINS).find(
-      ([, skin]) => skin.unlockWins === wins && previousWins < skin.unlockWins
-    );
+
+    let goatModeUnlock = null;
+    if (mode === "goat") {
+      const previousGoatModeWins = goatModeWins;
+      goatModeWins++;
+      saveGoatModeWins(goatModeWins);
+      goatModeUnlock = findNewlyUnlocked("goatModeWins", previousGoatModeWins, goatModeWins);
+      updateGoatModeProgress();
+    }
+    const winsUnlock = findNewlyUnlocked("wins", previousWins, wins);
+    const justUnlocked = goatModeUnlock || winsUnlock;
+
+    const winMessage =
+      mode === "goat" ? "You win! GOAT Mode conquered! 🔥" : "You win! The goat stays leashed. 🐐";
     statusEl.textContent = justUnlocked
-      ? `You win! The goat stays leashed. 🐐 New skin unlocked: ${justUnlocked[1].label}!`
-      : "You win! The goat stays leashed. 🐐";
+      ? `${winMessage} New skin unlocked: ${justUnlocked[1].label}!`
+      : winMessage;
     statusEl.className = "status win";
     updateSkinUI();
     playCheer();
-  } else if (wrongCount >= MAX_WRONG) {
-    gameOver = true;
-    statusEl.textContent = `The goat broke free! The word was ${word}.`;
+  } else {
+    const loseMessage =
+      mode === "goat"
+        ? reason === "timeout"
+          ? `Time's up! The goat tumbled into the hay barrel. The word was ${word}.`
+          : `Three strikes — into the hay barrel! The word was ${word}.`
+        : `The goat broke free! The word was ${word}.`;
+    statusEl.textContent = loseMessage;
     statusEl.className = "status lose";
     playWomp();
   }
-  if (gameOver) {
-    document.querySelectorAll(".key").forEach((btn) => (btn.disabled = true));
+
+  document.querySelectorAll(".key").forEach((btn) => (btn.disabled = true));
+}
+
+function checkGameEnd() {
+  const solved = word.split("").every((ch) => ch === " " || guessed.has(ch));
+  if (solved) {
+    endGame(true);
+  } else if (wrongCount >= maxWrong) {
+    endGame(false, "mistakes");
   }
 }
 
@@ -428,7 +532,7 @@ function guess(letter) {
     }
   }
   renderWord();
-  renderGoat();
+  renderScene();
   renderStatus();
   updateKeyStates();
   checkGameEnd();
@@ -445,6 +549,7 @@ function newGame() {
   wrongCount = 0;
   correctStreak = 0;
   gameOver = false;
+  maxWrong = mode === "goat" ? GOAT_MODE_MAX_WRONG : CLASSIC_MAX_WRONG;
   statusEl.textContent = "";
   statusEl.className = "status";
   categoryEl.textContent = customChallenge
@@ -455,9 +560,37 @@ function newGame() {
   newGameBtn.textContent = customChallenge ? "Play Again" : "New Game";
   buildKeyboard();
   renderWord();
-  renderGoat();
+  renderScene();
   renderStatus();
+  if (mode === "goat") {
+    startTimer();
+  } else {
+    stopTimer();
+  }
 }
+
+function setMode(newMode) {
+  if (mode === newMode) return;
+  mode = newMode;
+  const isGoatMode = mode === "goat";
+
+  modeButtons.forEach((btn) => btn.classList.toggle("selected", btn.dataset.mode === mode));
+  classicSceneEl.hidden = isGoatMode;
+  barrelSceneEl.hidden = !isGoatMode;
+  skinsSectionEl.hidden = isGoatMode;
+  timerDisplayEl.hidden = !isGoatMode;
+  goatModeProgressEl.hidden = !isGoatMode;
+  modeDescriptionEl.textContent = isGoatMode
+    ? "45 seconds on the clock, only 3 mistakes allowed. Miss the clock or strike out and the goat tumbles into the hay barrel."
+    : "6 wrong guesses allowed, no timer.";
+
+  if (isGoatMode) updateGoatModeProgress();
+  newGame();
+}
+
+modeButtons.forEach((btn) => {
+  btn.addEventListener("click", () => setMode(btn.dataset.mode));
+});
 
 function exitCustomMode() {
   customChallenge = null;

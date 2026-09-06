@@ -22,6 +22,11 @@ Play it here: **https://gclark22.github.io/leash_goat/**
   the link itself (no server/database), so it works on GitHub Pages as-is.
   It's just base64 encoding, not encryption — fine for party-game fun, not
   for actual secrets.
+- **🔥 GOAT Mode**: an extreme alternate mode — a 45-second timer and only 3
+  mistakes allowed. Instead of drawing more of the goat, each mistake reels
+  it closer to a hay barrel; run out of time or strikes and it tumbles in.
+  Winning once unlocks 🐟 Fish; winning 3 times unlocks 🦸 Super Goat (a
+  caped, masked version of the original goat).
 
 ## Running locally
 

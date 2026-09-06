@@ -49,6 +49,24 @@
   --gold-frame: #d4af37;
   --gold-frame-bg: #fdf3d0;
   --gold-photo-filter: sepia(0.85) saturate(4.5) hue-rotate(-12deg) brightness(1.1) contrast(1.05);
+
+  --fish-body: #6fa8d8;
+  --fish-belly: #dff0fb;
+  --fish-fin: #e08b3e;
+  --fish-fin-inner: #f3b978;
+  --fish-hoof: #3a5a72;
+  --fish-collar: #2f8f6b;
+  --fish-lips: #c65f7a;
+
+  --hero-cape: #c0392b;
+  --hero-cape-accent: #e8c454;
+  --hero-mask: #2b2420;
+  --hero-emblem: #e8c454;
+
+  --barrel-wood: #a9713f;
+  --barrel-wood-dark: #7a4e28;
+  --barrel-hay: #e8c454;
+  --barrel-hay-dark: #c9a53a;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -108,6 +126,11 @@ h1 {
   height: 240px;
   color: var(--ink);
   display: none;
+}
+
+.barrel-scene svg {
+  width: 220px;
+  height: 240px;
 }
 
 .skin.active {
@@ -174,6 +197,68 @@ h1 {
   font-size: 0.7rem;
   font-weight: 500;
   color: var(--muted);
+}
+
+.mode-picker-section {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.mode-picker {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.mode-option {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background: var(--panel);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.mode-option.selected {
+  border-color: var(--accent);
+}
+
+.mode-description {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.timer-display {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--accent);
+  margin: 10px 0 0;
+}
+
+.timer-display.low-time {
+  color: var(--wrong);
+}
+
+.goat-mode-progress {
+  text-align: center;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0;
+}
+
+.barrel-frame {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.barrel-frame.visible {
+  opacity: 1;
 }
 
 .game {
