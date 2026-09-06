@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leash Goat</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>🐐 Leash Goat</h1>
+      <p class="subtitle">Guess wrong, and the goat gets closer to walking free.</p>
+    </header>
+
+    <main>
+      <section class="scene">
+        <svg class="skin" data-skin="goat" viewBox="0 0 200 220" role="img" aria-label="Leash goat drawing progress">
+          <!-- ground -->
+          <line x1="10" y1="200" x2="150" y2="200" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+          <!-- post -->
+          <line x1="40" y1="200" x2="40" y2="20" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="40" y1="20" x2="120" y2="20" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="40" y1="45" x2="60" y2="20" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+
+          <!-- painted back-to-front; reveal order (stage 1..6) is set by JS via data-stage, not document position -->
+
+          <!-- legs (revealed last, stage 6) - painted first so the body covers the leg tops -->
+          <g class="part" data-stage="6">
+            <rect x="95" y="160" width="10" height="36" rx="5" fill="var(--goat-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="93" y="188" width="14" height="9" rx="3" fill="var(--goat-hoof)"/>
+            <rect x="108" y="163" width="9" height="32" rx="4.5" fill="var(--goat-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="106" y="188" width="13" height="8" rx="3" fill="var(--goat-hoof)"/>
+            <rect x="124" y="163" width="9" height="32" rx="4.5" fill="var(--goat-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="122" y="188" width="13" height="8" rx="3" fill="var(--goat-hoof)"/>
+            <rect x="136" y="160" width="10" height="36" rx="5" fill="var(--goat-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="134" y="188" width="14" height="9" rx="3" fill="var(--goat-hoof)"/>
+          </g>
+
+          <!-- leash (revealed first, stage 1) -->
+          <path class="part" data-stage="1" d="M120 20 Q124 38 120 55" fill="none" stroke="var(--rig-outline)" stroke-width="3" stroke-linecap="round"/>
+
+          <!-- neck (revealed stage 4) - painted before the body/head so they cover the seams -->
+          <g class="part" data-stage="4">
+            <path d="M106 92 L138 92 L142 122 Q120 133 98 122 Z" fill="var(--goat-body)" stroke="var(--rig-outline)" stroke-width="3"/>
+          </g>
+
+          <!-- body + tail (revealed stage 5) -->
+          <g class="part" data-stage="5">
+            <ellipse cx="120" cy="145" rx="34" ry="28" fill="var(--goat-body)" stroke="var(--rig-outline)" stroke-width="3"/>
+            <ellipse cx="120" cy="154" rx="19" ry="14" fill="var(--goat-belly)"/>
+            <path d="M151 128 q14 2 10 16 q-3 9 -13 6 q6 -10 3 -22 Z" fill="var(--goat-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+          </g>
+
+          <!-- head, snout, ears (revealed stage 2, right after the leash) -->
+          <g class="part" data-stage="2">
+            <path d="M96 68 Q84 74 80 92 Q92 88 100 78 Z" fill="var(--goat-ear-outer)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <path d="M95 74 Q88 79 86 88 Q92 85 96 79 Z" fill="var(--goat-ear-inner)"/>
+            <path d="M144 68 Q156 74 160 92 Q148 88 140 78 Z" fill="var(--goat-ear-outer)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <path d="M145 74 Q152 79 154 88 Q148 85 144 79 Z" fill="var(--goat-ear-inner)"/>
+            <circle cx="120" cy="78" r="24" fill="var(--goat-body)" stroke="var(--rig-outline)" stroke-width="3"/>
+            <ellipse cx="120" cy="91" rx="14" ry="10" fill="var(--goat-belly)" stroke="var(--rig-outline)" stroke-width="2"/>
+          </g>
+
+          <!-- horns + face (revealed stage 3) - painted after the head so they sit on top of it -->
+          <g class="part" data-stage="3">
+            <path d="M109 58 Q100 48 104 36 Q114 44 112 58 Z" fill="var(--goat-horn)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <path d="M131 58 Q140 48 136 36 Q126 44 128 58 Z" fill="var(--goat-horn)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <circle cx="112" cy="76" r="3.5" fill="var(--rig-outline)"/>
+            <circle cx="128" cy="76" r="3.5" fill="var(--rig-outline)"/>
+            <circle cx="110.7" cy="74.7" r="1" fill="#fff"/>
+            <circle cx="126.7" cy="74.7" r="1" fill="#fff"/>
+            <ellipse cx="116" cy="93" rx="1.6" ry="2.2" fill="var(--rig-outline)"/>
+            <ellipse cx="124" cy="93" rx="1.6" ry="2.2" fill="var(--rig-outline)"/>
+            <path d="M114 98 Q120 102 126 98" fill="none" stroke="var(--rig-outline)" stroke-width="2" stroke-linecap="round"/>
+          </g>
+
+          <!-- collar (revealed stage 4, alongside the neck) - painted last so it stays on the top layer -->
+          <g class="part" data-stage="4">
+            <ellipse cx="120" cy="108" rx="19" ry="7" fill="var(--goat-collar)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <circle cx="120" cy="117" r="4" fill="#e8c454" stroke="var(--rig-outline)" stroke-width="1.5"/>
+          </g>
+        </svg>
+
+        <svg class="skin" data-skin="bunny" viewBox="0 0 200 220" role="img" aria-label="Leash bunny drawing progress">
+          <line x1="10" y1="200" x2="150" y2="200" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="40" y1="200" x2="40" y2="20" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="40" y1="20" x2="120" y2="20" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="40" y1="45" x2="60" y2="20" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+
+          <g class="part" data-stage="6">
+            <rect x="95" y="160" width="10" height="36" rx="5" fill="var(--bunny-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="93" y="188" width="14" height="9" rx="4" fill="var(--bunny-paw)"/>
+            <rect x="108" y="163" width="9" height="32" rx="4.5" fill="var(--bunny-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="106" y="188" width="13" height="8" rx="4" fill="var(--bunny-paw)"/>
+            <rect x="124" y="163" width="9" height="32" rx="4.5" fill="var(--bunny-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="122" y="188" width="13" height="8" rx="4" fill="var(--bunny-paw)"/>
+            <rect x="136" y="160" width="10" height="36" rx="5" fill="var(--bunny-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="134" y="188" width="14" height="9" rx="4" fill="var(--bunny-paw)"/>
+          </g>
+
+          <path class="part" data-stage="1" d="M120 20 Q124 38 120 55" fill="none" stroke="var(--rig-outline)" stroke-width="3" stroke-linecap="round"/>
+
+          <g class="part" data-stage="4">
+            <path d="M106 92 L138 92 L142 122 Q120 133 98 122 Z" fill="var(--bunny-body)" stroke="var(--rig-outline)" stroke-width="3"/>
+          </g>
+
+          <g class="part" data-stage="5">
+            <ellipse cx="120" cy="145" rx="34" ry="28" fill="var(--bunny-body)" stroke="var(--rig-outline)" stroke-width="3"/>
+            <ellipse cx="120" cy="154" rx="19" ry="14" fill="var(--bunny-belly)"/>
+            <circle cx="151" cy="138" r="10" fill="#ffffff" stroke="var(--rig-outline)" stroke-width="2.5"/>
+          </g>
+
+          <g class="part" data-stage="2">
+            <g transform="rotate(-12 108 48)">
+              <ellipse cx="108" cy="48" rx="9" ry="28" fill="var(--bunny-ear-outer)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+              <ellipse cx="108" cy="50" rx="4.5" ry="20" fill="var(--bunny-ear-inner)"/>
+            </g>
+            <g transform="rotate(12 132 48)">
+              <ellipse cx="132" cy="48" rx="9" ry="28" fill="var(--bunny-ear-outer)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+              <ellipse cx="132" cy="50" rx="4.5" ry="20" fill="var(--bunny-ear-inner)"/>
+            </g>
+            <circle cx="120" cy="78" r="24" fill="var(--bunny-body)" stroke="var(--rig-outline)" stroke-width="3"/>
+            <ellipse cx="120" cy="91" rx="14" ry="10" fill="var(--bunny-belly)" stroke="var(--rig-outline)" stroke-width="2"/>
+          </g>
+
+          <g class="part" data-stage="3">
+            <circle cx="112" cy="76" r="3.5" fill="var(--rig-outline)"/>
+            <circle cx="128" cy="76" r="3.5" fill="var(--rig-outline)"/>
+            <circle cx="110.7" cy="74.7" r="1" fill="#fff"/>
+            <circle cx="126.7" cy="74.7" r="1" fill="#fff"/>
+            <ellipse cx="120" cy="93" rx="3" ry="2.2" fill="var(--bunny-nose)"/>
+            <line x1="106" y1="92" x2="90" y2="88" stroke="var(--rig-outline)" stroke-width="1" stroke-linecap="round"/>
+            <line x1="106" y1="96" x2="90" y2="97" stroke="var(--rig-outline)" stroke-width="1" stroke-linecap="round"/>
+            <line x1="134" y1="92" x2="150" y2="88" stroke="var(--rig-outline)" stroke-width="1" stroke-linecap="round"/>
+            <line x1="134" y1="96" x2="150" y2="97" stroke="var(--rig-outline)" stroke-width="1" stroke-linecap="round"/>
+            <rect x="116" y="97" width="3.5" height="5" rx="1" fill="#fff" stroke="var(--rig-outline)" stroke-width="0.75"/>
+            <rect x="120.5" y="97" width="3.5" height="5" rx="1" fill="#fff" stroke="var(--rig-outline)" stroke-width="0.75"/>
+          </g>
+
+          <g class="part" data-stage="4">
+            <ellipse cx="120" cy="108" rx="19" ry="7" fill="var(--bunny-collar)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <circle cx="120" cy="117" r="4" fill="#e8c454" stroke="var(--rig-outline)" stroke-width="1.5"/>
+          </g>
+        </svg>
+
+        <svg class="skin" data-skin="llama" viewBox="0 0 200 220" role="img" aria-label="Leash llama drawing progress">
+          <line x1="10" y1="200" x2="150" y2="200" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="40" y1="200" x2="40" y2="20" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="40" y1="20" x2="120" y2="20" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="40" y1="45" x2="60" y2="20" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+
+          <g class="part" data-stage="6">
+            <rect x="95" y="160" width="10" height="36" rx="5" fill="var(--llama-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="93" y="188" width="14" height="9" rx="3" fill="var(--llama-hoof)"/>
+            <rect x="108" y="163" width="9" height="32" rx="4.5" fill="var(--llama-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="106" y="188" width="13" height="8" rx="3" fill="var(--llama-hoof)"/>
+            <rect x="124" y="163" width="9" height="32" rx="4.5" fill="var(--llama-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="122" y="188" width="13" height="8" rx="3" fill="var(--llama-hoof)"/>
+            <rect x="136" y="160" width="10" height="36" rx="5" fill="var(--llama-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="134" y="188" width="14" height="9" rx="3" fill="var(--llama-hoof)"/>
+          </g>
+
+          <path class="part" data-stage="1" d="M120 20 Q123 26 120 32" fill="none" stroke="var(--rig-outline)" stroke-width="3" stroke-linecap="round"/>
+
+          <g class="part" data-stage="4">
+            <path d="M109 64 L131 64 L138 122 Q120 133 102 122 Z" fill="var(--llama-body)" stroke="var(--rig-outline)" stroke-width="3"/>
+          </g>
+
+          <g class="part" data-stage="5">
+            <ellipse cx="120" cy="145" rx="34" ry="28" fill="var(--llama-body)" stroke="var(--rig-outline)" stroke-width="3"/>
+            <path d="M151 128 q14 2 10 16 q-3 9 -13 6 q6 -10 3 -22 Z" fill="var(--llama-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="90" y="130" width="60" height="18" rx="8" fill="var(--llama-blanket)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <rect x="90" y="136" width="60" height="3" fill="var(--llama-blanket-accent)"/>
+            <rect x="90" y="141" width="60" height="3" fill="var(--llama-blanket-accent2)"/>
+          </g>
+
+          <g class="part" data-stage="2">
+            <g transform="rotate(-15 106 30)">
+              <ellipse cx="106" cy="28" rx="5" ry="14" fill="var(--llama-ear-outer)" stroke="var(--rig-outline)" stroke-width="2"/>
+              <ellipse cx="106" cy="29" rx="2.5" ry="9" fill="var(--llama-ear-inner)"/>
+            </g>
+            <g transform="rotate(15 134 30)">
+              <ellipse cx="134" cy="28" rx="5" ry="14" fill="var(--llama-ear-outer)" stroke="var(--rig-outline)" stroke-width="2"/>
+              <ellipse cx="134" cy="29" rx="2.5" ry="9" fill="var(--llama-ear-inner)"/>
+            </g>
+            <circle cx="120" cy="50" r="18" fill="var(--llama-body)" stroke="var(--rig-outline)" stroke-width="3"/>
+            <ellipse cx="120" cy="70" rx="10" ry="15" fill="var(--llama-muzzle)" stroke="var(--rig-outline)" stroke-width="2"/>
+          </g>
+
+          <g class="part" data-stage="3">
+            <path d="M108 34 Q112 20 120 26 Q128 20 132 34 Q120 30 108 34 Z" fill="var(--llama-tuft)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <circle cx="113" cy="48" r="3" fill="var(--rig-outline)"/>
+            <circle cx="127" cy="48" r="3" fill="var(--rig-outline)"/>
+            <circle cx="111.8" cy="46.8" r="1" fill="#fff"/>
+            <circle cx="125.8" cy="46.8" r="1" fill="#fff"/>
+            <ellipse cx="115" cy="79" rx="1.4" ry="2" fill="var(--rig-outline)"/>
+            <ellipse cx="125" cy="79" rx="1.4" ry="2" fill="var(--rig-outline)"/>
+            <path d="M113 83 Q120 87 127 83" fill="none" stroke="var(--rig-outline)" stroke-width="2" stroke-linecap="round"/>
+          </g>
+
+          <g class="part" data-stage="4">
+            <ellipse cx="120" cy="95" rx="17" ry="6" fill="var(--llama-blanket)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <circle cx="120" cy="103" r="4" fill="#e8c454" stroke="var(--rig-outline)" stroke-width="1.5"/>
+          </g>
+        </svg>
+
+        <svg class="skin" data-skin="goob" viewBox="0 0 200 220" role="img" aria-label="Leash goldendoodle drawing progress">
+          <line x1="10" y1="200" x2="150" y2="200" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="40" y1="200" x2="40" y2="20" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="40" y1="20" x2="120" y2="20" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="40" y1="45" x2="60" y2="20" stroke="var(--rig-outline)" stroke-width="4" stroke-linecap="round"/>
+
+          <g class="part" data-stage="6">
+            <rect x="95" y="160" width="10" height="36" rx="5" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="93" y="188" width="14" height="9" rx="4" fill="var(--goob-paw)"/>
+            <rect x="108" y="163" width="9" height="32" rx="4.5" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="106" y="188" width="13" height="8" rx="4" fill="var(--goob-paw)"/>
+            <rect x="124" y="163" width="9" height="32" rx="4.5" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="122" y="188" width="13" height="8" rx="4" fill="var(--goob-paw)"/>
+            <rect x="136" y="160" width="10" height="36" rx="5" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <rect x="134" y="188" width="14" height="9" rx="4" fill="var(--goob-paw)"/>
+          </g>
+
+          <path class="part" data-stage="1" d="M120 20 Q124 38 120 55" fill="none" stroke="var(--rig-outline)" stroke-width="3" stroke-linecap="round"/>
+
+          <g class="part" data-stage="4">
+            <path d="M106 92 L138 92 L142 122 Q120 133 98 122 Z" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="3"/>
+          </g>
+
+          <g class="part" data-stage="5">
+            <ellipse cx="120" cy="145" rx="34" ry="28" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="3"/>
+            <ellipse cx="120" cy="154" rx="19" ry="14" fill="var(--goob-belly)"/>
+            <circle cx="95" cy="124" r="6" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <circle cx="145" cy="124" r="6" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <circle cx="120" cy="118" r="6" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <path d="M150 130 q17 -5 15 12 q-2 11 -15 8" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <circle cx="168" cy="139" r="6" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="2"/>
+          </g>
+
+          <g class="part" data-stage="2">
+            <path d="M92 66 Q76 78 82 100 Q96 92 102 76 Z" fill="var(--goob-ear-outer)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <path d="M91 75 Q83 84 86 95 Q94 89 97 78 Z" fill="var(--goob-ear-inner)"/>
+            <path d="M148 66 Q164 78 158 100 Q144 92 138 76 Z" fill="var(--goob-ear-outer)" stroke="var(--rig-outline)" stroke-width="2.5"/>
+            <path d="M149 75 Q157 84 154 95 Q146 89 143 78 Z" fill="var(--goob-ear-inner)"/>
+            <circle cx="120" cy="78" r="24" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="3"/>
+            <circle cx="100" cy="58" r="6" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <circle cx="120" cy="53" r="6.5" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <circle cx="140" cy="58" r="6" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <circle cx="103" cy="97" r="5.5" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <circle cx="137" cy="97" r="5.5" fill="var(--goob-body)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <ellipse cx="120" cy="93" rx="13" ry="9" fill="var(--goob-muzzle)" stroke="var(--rig-outline)" stroke-width="2"/>
+          </g>
+
+          <g class="part" data-stage="3">
+            <circle cx="112" cy="76" r="3.5" fill="var(--rig-outline)"/>
+            <circle cx="128" cy="76" r="3.5" fill="var(--rig-outline)"/>
+            <circle cx="110.7" cy="74.7" r="1" fill="#fff"/>
+            <circle cx="126.7" cy="74.7" r="1" fill="#fff"/>
+            <ellipse cx="120" cy="90" rx="4" ry="3" fill="var(--goob-nose)"/>
+            <path d="M116 98 Q120 108 124 98 Q120 103 116 98 Z" fill="var(--goob-tongue)" stroke="var(--rig-outline)" stroke-width="1.5"/>
+          </g>
+
+          <g class="part" data-stage="4">
+            <ellipse cx="120" cy="108" rx="19" ry="7" fill="var(--goob-collar)" stroke="var(--rig-outline)" stroke-width="2"/>
+            <circle cx="120" cy="117" r="4" fill="#e8c454" stroke="var(--rig-outline)" stroke-width="1.5"/>
+          </g>
+        </svg>
+      </section>
+
+      <section class="skins">
+        <p class="win-counter" id="win-counter">🏆 Wins: 0</p>
+        <div class="skin-picker" id="skin-picker">
+          <button class="skin-option" data-skin="goat">🐐 Goat</button>
+          <button class="skin-option" data-skin="bunny">🐰 Bunny<span class="lock">🔒 3 wins</span></button>
+          <button class="skin-option" data-skin="llama">🦙 Llama<span class="lock">🔒 5 wins</span></button>
+          <button class="skin-option" data-skin="goob">🐩 Goob<span class="lock">🔒 10 wins</span></button>
+        </div>
+      </section>
+
+      <section class="game">
+        <p class="category" id="category"></p>
+        <p class="word" id="word" aria-live="polite"></p>
+
+        <p class="status" id="status" aria-live="assertive"></p>
+        <p class="guesses-left" id="guesses-left"></p>
+
+        <div class="keyboard" id="keyboard"></div>
+
+        <div class="actions">
+          <button id="new-game" class="new-game">New Game</button>
+          <button id="challenge-btn" class="new-game secondary">🎯 Challenge a Friend</button>
+          <button id="play-random-btn" class="new-game secondary" hidden>🎲 Play a Random Word Instead</button>
+        </div>
+
+        <div id="challenge-panel" class="challenge-panel" hidden>
+          <label for="challenge-word">Your secret word or phrase</label>
+          <input id="challenge-word" type="text" maxlength="40" placeholder="e.g. SOUR CANDY">
+          <label for="challenge-hint">Optional hint (shown instead of a category)</label>
+          <input id="challenge-hint" type="text" maxlength="80" placeholder="e.g. Something Grandma always has">
+          <p class="challenge-error" id="challenge-error"></p>
+          <button id="generate-link" class="new-game">Generate Link</button>
+          <div class="link-output" id="link-output" hidden>
+            <input id="challenge-link" type="text" readonly>
+            <button id="copy-link" class="key">Copy</button>
+          </div>
+          <p class="challenge-note">Anyone with the link can peek at the word by decoding it, so keep it just for friendly fun, not real secrets.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Type a letter on your keyboard, or click one below.</p>
+    </footer>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
