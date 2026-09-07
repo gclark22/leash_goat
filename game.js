@@ -127,6 +127,22 @@ function saveGoatModeWins(count) {
   }
 }
 
+function loadFishUnlocked() {
+  try {
+    return localStorage.getItem("leashGoatFishUnlocked") === "true";
+  } catch (err) {
+    return false;
+  }
+}
+
+function saveFishUnlocked(value) {
+  try {
+    localStorage.setItem("leashGoatFishUnlocked", String(value));
+  } catch (err) {
+    // localStorage unavailable; unlock just won't persist.
+  }
+}
+
 function loadSkin() {
   try {
     return localStorage.getItem("leashGoatSkin") || "goat";
@@ -147,6 +163,7 @@ let wins = loadWins();
 let goatModeWins = loadGoatModeWins();
 let danyUnlocked = loadDanyUnlocked();
 let goldenDanyUnlocked = loadGoldenDanyUnlocked();
+let fishUnlocked = loadFishUnlocked();
 let correctStreak = 0;
 
 const SKINS = {
@@ -158,6 +175,7 @@ const SKINS = {
   "dany-gold": { label: "✨ Golden Dany", isUnlocked: () => goldenDanyUnlocked },
   cat: { label: "🐱 Cat", counterName: "goatModeWins", unlockThreshold: 3, isUnlocked: () => goatModeWins >= 3 },
   "super-goat": { label: "🦸 Super Goat", counterName: "goatModeWins", unlockThreshold: 5, isUnlocked: () => goatModeWins >= 5 },
+  fish: { label: "🐟 Fish", hiddenLabel: "🔒 ???", isUnlocked: () => fishUnlocked },
 };
 
 let selectedSkin = loadSkin();
@@ -174,6 +192,10 @@ function updateSkinUI() {
     btn.classList.toggle("selected", btn.dataset.skin === selectedSkin);
     const lock = btn.querySelector(".lock");
     if (lock) lock.hidden = unlocked;
+    const nameSpan = btn.querySelector(".skin-name");
+    if (nameSpan && skin.hiddenLabel) {
+      nameSpan.textContent = unlocked ? skin.label : skin.hiddenLabel;
+    }
   });
   document.querySelectorAll(".skin").forEach((svg) => {
     svg.classList.toggle("active", svg.dataset.skin === selectedSkin);
@@ -200,6 +222,19 @@ secretButton.addEventListener("click", () => {
   updateSkinUI();
   statusEl.textContent = "✨ Secret unlocked: Golden Dany!";
   statusEl.className = "status win";
+});
+
+let secretCodeBuffer = "";
+document.addEventListener("keydown", (e) => {
+  if (!/^[0-9]$/.test(e.key)) return;
+  secretCodeBuffer = (secretCodeBuffer + e.key).slice(-3);
+  if (secretCodeBuffer === "123" && !fishUnlocked) {
+    fishUnlocked = true;
+    saveFishUnlocked(true);
+    updateSkinUI();
+    statusEl.textContent = "🐟 Secret unlocked: Fish!";
+    statusEl.className = "status win";
+  }
 });
 
 function sanitizeWord(raw) {
